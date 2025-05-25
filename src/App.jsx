@@ -26,7 +26,7 @@ function App() {
             <Route index element={<Navigate replace to="cities" />} />
             <Route path="cities" element={<CityList />} />
             {/* Storing state in the URL itself so that it can be accessed by different 
-          components when required. */}
+              components when required. */}
             <Route path="cities/:id" element={<City />} />
             <Route path="countries" element={<CountriesList />} />
             <Route path="form" element={<Form />} />
