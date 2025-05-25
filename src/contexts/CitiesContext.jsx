@@ -40,6 +40,25 @@ function CitiesProvider({ children }) {
     }
   };
 
+  const createCity = async (newCity) => {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${BASE_URL}/cities`, {
+        method: "POST",
+        body: JSON.stringify(newCity),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      setCities((cities) => [...cities, data]);
+    } catch (error) {
+      alert("There is some error loading data!");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     // 2. Provide values to our components through the context provider.
     <CitiesContext.Provider
@@ -48,6 +67,7 @@ function CitiesProvider({ children }) {
         isLoading,
         currentCity,
         fetchCurrentCity,
+        createCity,
       }}
     >
       {children}
