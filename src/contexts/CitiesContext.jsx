@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useReducer } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useReducer,
+} from "react";
 
 const BASE_URL = "http://localhost:8000";
 
@@ -84,24 +90,28 @@ function CitiesProvider({ children }) {
     fetchCities();
   }, []);
 
-  const fetchCurrentCity = async (id) => {
-    // If the currently active city is clicked again, then we don't
-    // need to fetch it again from the api to load it faster. 
-    if (Number(id) === currentCity.id) return ;
-    
-    dispatch({ type: "loading" });
+  // Using "useCallback" hook to not call the function across re-renders.
+  const fetchCurrentCity = useCallback(
+    async function fetchCurrentCity(id) {
+      // If the currently active city is clicked again, then we don't
+      // need to fetch it again from the api to load it faster.
+      if (Number(id) === currentCity.id) return;
 
-    try {
-      const res = await fetch(`${BASE_URL}/cities/${id}`);
-      const data = await res.json();
-      dispatch({ type: "city/loaded", payload: data });
-    } catch {
-      dispatch({
-        type: "rejected",
-        payload: "There is some error in loading city!",
-      });
-    }
-  };
+      dispatch({ type: "loading" });
+
+      try {
+        const res = await fetch(`${BASE_URL}/cities/${id}`);
+        const data = await res.json();
+        dispatch({ type: "city/loaded", payload: data });
+      } catch {
+        dispatch({
+          type: "rejected",
+          payload: "There is some error in loading city!",
+        });
+      }
+    },
+    [currentCity.id]
+  );
 
   const createCity = async (newCity) => {
     dispatch({ type: "loading" });
